@@ -1,0 +1,88 @@
+---
+title: "lettuce_growth_data"
+author: "Sam H."
+date: "2024-02-15"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+```{r}
+library(tidyverse)
+library(ggplot2)
+```
+
+##Assigning a variable to the lettuce dataset
+```{r}
+lettuce_data <- read_csv("lettuce_dataset_1.5.csv", 
+                         locale = readr::locale(encoding = "latin1"))
+```
+#This is an altered .csv file displaying data for only 1 of the 70
+#specimens
+
+#Alternatively, I could filter data down to each specimen with
+#this code block and a pipe operator:
+  
+#lettuce_data %>%
+# filter(plant_id = '1')
+
+#but I decided it would be easier to alter the data range in the .csv itself
+
+##Renaming col_names for plotting
+```{r}
+names(lettuce_data)[names(lettuce_data) == 'Temperature (C)'] <- 'temp'
+names(lettuce_data)[names(lettuce_data) == 'Humidity (%)'] <- 'humidity'
+names(lettuce_data)[names(lettuce_data) == 'TDS Value (ppm)'] <- 'tdsv'
+names(lettuce_data)[names(lettuce_data) == 'pH Level'] <- 'ph_lvl'
+names(lettuce_data)[names(lettuce_data) == 'Growth Days'] <- 'growth_days'
+names(lettuce_data)[names(lettuce_data) == 'Plant_ID'] <- 'plant_id'
+```
+
+##Checking variable
+glimpse(lettuce_data)
+colnames(lettuce_data)
+
+##Plotting data 
+
+##Reviewing temperature trends
+```{r}
+ggplot(data = lettuce_data, aes(x = growth_days, y = temp)) +
+  geom_point()+
+  geom_smooth()+
+  labs(title='Lettuce Growth: Temperature throughout Growth Days', 
+           subtitle='Sample 1 of 70 individuals',
+           caption= 'Data collected by Jjay Fabor',
+           x= "Growth days",
+           y= "Temperature (C)")
+```
+
+##Searching for patterns in humidity over growth period
+```{r}
+ggplot(data = lettuce_data, aes(x = growth_days, y = humidity)) +
+  geom_point()+
+  geom_smooth()+
+  labs(title='Lettuce Growth: Humidity throughout Gorwth Days', 
+           subtitle='Sample 1 of 70 individuals',
+           caption= 'Data collected by Jjay Fabor',
+           x= 'Growth days',
+           y= 'Humidity') 
+```
+
+##Analyzing the relationship between pH level and TDS value
+```{r}
+lettuce_data %>%
+  ggplot(aes(ph_lvl, tdsv))+
+  geom_point(size = 3, alpha = 0.5)+
+  geom_smooth(method = lm, se = F)+
+  labs(title='Lettuce Growth: pH level vs. TDS value (ppm)', 
+       subtitle='Sample 1 of 70 individuals',
+       caption= 'Data collected by Jjay Fabor')
+```
+
+
+
